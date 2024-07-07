@@ -74,3 +74,21 @@ class UserRepository:
         conn.commit()
         cur.close()
         return project_id
+
+    @staticmethod
+    def get_all_functions():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT DISTINCT tm.function
+            FROM templatetasklist ttl
+            JOIN taskmaster tm ON ttl.taskid = tm.taskid
+            WHERE ttl.templateid = 1;
+        """)
+        functions = cur.fetchall()
+        cur.close()
+        print(functions)
+        return [{
+            'function': function[0]
+        } for function in functions
+        ]

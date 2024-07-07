@@ -55,3 +55,11 @@ def create_project():
     if project_id:
         return jsonify({'message': 'project created successfully'}), 201
     return jsonify({'message': 'project already exists'}), 400
+
+@cross_origin
+@auth_bp.route('/getallfunctions', methods=['GET'])
+def get_all_functions():
+    functions = ProjectManagementService.get_all_functions()
+    if functions:
+        return jsonify(functions), 200
+    return jsonify({'message': 'No functions found'}), 404

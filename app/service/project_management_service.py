@@ -27,3 +27,7 @@ class ProjectManagementService:
     def create_project(project_name, project_description, project_start_date, project_end_date, project_manager):
         project_id = UserRepository.save_project(project_name, project_description, project_start_date, project_end_date, project_manager)
         return project_id
+    @staticmethod
+    def get_all_functions():
+        functions = UserRepository.get_all_functions()
+        return functions
