@@ -24,8 +24,8 @@ class ProjectManagementService:
         tasks = UserRepository.get_all_tasks()
         return tasks
     @staticmethod
-    def create_project(project_name, project_description, project_start_date, project_end_date, project_manager):
-        project_id = UserRepository.save_project(project_name, project_description, project_start_date, project_end_date, project_manager)
+    def save_project(project_name, project_template_id, project_created_by, project_portfolio,project_created_time):
+        project_id = UserRepository.save_project(project_name, project_template_id, project_created_by, project_portfolio,project_created_time)
         return project_id
     @staticmethod
     def get_all_functions():

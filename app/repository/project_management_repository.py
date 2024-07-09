@@ -63,13 +63,13 @@ class UserRepository:
         return task_id
 
     @staticmethod
-    def save_project(project_name, project_description, project_start_date, project_end_date, project_manager):
+    def save_project(project_name, project_template_id, project_created_by, project_portfolio,project_created_time):
         conn = get_db()
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO projectmaster (projectName, projectTemplateId, dueDate, createdBy, portfolio)
-            VALUES (%s,%s,%s,%s,%s) RETURNING projectId
-        """, (project_name, project_description, project_start_date, project_end_date, project_manager))
+            INSERT INTO projectmaster (projectid,projectName, projectTemplateId, dueDate, createdBy, portfolio)
+            VALUES (100,%s,%s,%s,%s,%s) RETURNING projectId
+        """, (project_name, project_template_id, project_created_by, project_portfolio,project_created_time))
         project_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
@@ -92,3 +92,15 @@ class UserRepository:
             'function': function[0]
         } for function in functions
         ]
+    @staticmethod
+    def save_project():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO projectmaster (projectName, projectTemplateId, dueDate, createdBy, portfolio)
+            VALUES ('project1', 1, '2021-06-01', '2021-06-30', 'portfolio1') RETURNING projectId
+        """)
+        project_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        return project_id
