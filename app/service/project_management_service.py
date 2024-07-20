@@ -10,11 +10,6 @@ class ProjectManagementService:
     def get_all_templates():
         templates = UserRepository.get_all_templates()
         return templates
-
-    @staticmethod
-    def add_template(template_id,templateName, taskid):
-        template_id = UserRepository.save_template(template_id,templateName, taskid)
-        return template_id
     @staticmethod
     def add_task(task_id,task_name, function):
         task_id = UserRepository.save_task(task_id,task_name, function)
@@ -31,3 +26,16 @@ class ProjectManagementService:
     def get_all_functions():
         functions = UserRepository.get_all_functions()
         return functions
+
+    @staticmethod
+    def save_template(template_name,created_by,created_on ):
+        template_id = UserRepository.save_template(template_name,created_by,created_on)
+        return template_id
+
+    @staticmethod
+    def save_task_template(template_id,task_ids):
+        return UserRepository.save_task_template(template_id,task_ids)
+
+    @staticmethod
+    def get_task_template(template_id):
+        return UserRepository.get_task_template(template_id)
