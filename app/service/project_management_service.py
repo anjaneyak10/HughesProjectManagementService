@@ -19,3 +19,8 @@ class ProjectManagementService:
     @staticmethod
     def get_task_template(template_id):
         return UserRepository.get_task_template(template_id)
+
+    @staticmethod
+    def get_all_tasks():
+        tasks = UserRepository.get_all_tasks()
+        return tasks

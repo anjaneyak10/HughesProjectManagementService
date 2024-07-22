@@ -39,3 +39,12 @@ def get_task_template():
     if tasks:
         return jsonify({'tasks': tasks}), 200
     return jsonify({'message': 'No tasks found'}), 404
+
+@cross_origin
+@auth_bp.route('/getalltasks', methods=['GET'])
+def get_all_tasks():
+    tasks = ProjectManagementService.get_all_tasks()
+    print(tasks)
+    if tasks:
+        return jsonify({'tasks': tasks}), 200
+    return jsonify({'message': 'No tasks found'}), 404

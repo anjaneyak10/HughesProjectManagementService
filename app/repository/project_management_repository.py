@@ -48,3 +48,21 @@ class UserRepository:
         tasks = cur.fetchall()
         cur.close()
         return [task[0] for task in tasks]
+
+    @staticmethod
+    def get_all_tasks():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT *
+            FROM taskmaster
+        """)
+        tasks = cur.fetchall()
+        cur.close()
+        print(tasks)
+        return [{
+            'taskid': task[0],
+            'taskName': task[1],
+            'function': task[2],
+            'weightage': task[3],
+        } for task in tasks]
