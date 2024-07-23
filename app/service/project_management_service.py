@@ -24,3 +24,23 @@ class ProjectManagementService:
     def get_all_tasks():
         tasks = UserRepository.get_all_tasks()
         return tasks
+
+    @staticmethod
+    def get_all_employees():
+        employees = UserRepository.get_all_employees()
+        return employees
+
+    @staticmethod
+    def get_functions(template_id):
+        functions = UserRepository.get_functions(template_id)
+        return functions
+
+    @staticmethod
+    def get_all_templates():
+        templates = UserRepository.get_all_templates()
+        return templates
+    
+    @staticmethod
+    def save_project(project_name,template_id, created_by, created_on,completion,functionalLeads):
+        project_id = UserRepository.save_project(project_name,template_id, created_by, created_on,completion,functionalLeads)
+        return project_id

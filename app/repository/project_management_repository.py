@@ -66,3 +66,88 @@ class UserRepository:
             'function': task[2],
             'weightage': task[3],
         } for task in tasks]
+
+    @staticmethod
+    def get_all_employees():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT email
+            FROM userMaster
+        """)
+        employees = cur.fetchall()
+        cur.close()
+        print(employees)
+        return [{
+            'email': employee[0],
+        } for employee in employees]
+
+    @staticmethod
+    def get_functions(template_id):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT Distinct f.*
+            FROM functionMaster f inner join taskMaster t on (f.functionId = t.functionid) 
+            inner join templateTaskList t2 on (t2.taskID = t.taskId)
+            where t2.templateId = %s
+        """, (template_id,))
+        functions = cur.fetchall()
+        cur.close()
+        print(functions)
+        return [{
+            'funcitonId': function[0],
+            'functionName': function[1],
+        } for function in functions]
+
+    @staticmethod
+    def get_all_templates():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT *
+            FROM templateMaster
+        """)
+        templates = cur.fetchall()
+        cur.close()
+        print(templates)
+        return [{
+            'templateId': template[0],
+            'templateName': template[1],
+        } for template in templates]
+
+    @staticmethod
+    def save_project(project_name,template_id, created_by, created_on,completion,functionalLeads):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO projectMaster (projectName, projectTemplateId, createdByEmail, createdOn, completion)
+            VALUES (%s,%s,%s,%s,%s) RETURNING projectId
+        """, (project_name,template_id, created_by, created_on, completion))
+        project_id = cur.fetchone()[0]
+        project_function_data = [
+            (project_id, functionalLead['functionId'], functionalLead['functionalLeadEmail'], 0) 
+            for functionalLead in functionalLeads
+        ]
+        cur.executemany("""
+            INSERT INTO projectFunctionMaster (projectId, functionId, functionLeadEmail, completion)
+            VALUES (%s, %s, %s, %s)
+        """, project_function_data)
+        cur.execute("""
+            insert into projecttaskmaster (projectid,taskid,assigneeemail,functionid,completion,exception,specialinstruction,weightage,priority,duedate,createdby,createdon,lastupdatedby,lastupdatedon,dependencyoverride,active)
+            select distinct p.projectid,t2.taskid,pf.functionleademail ,t2.functionid,false,null,null,t2.weightage,null, null,p.createdbyemail ,now(),null,null,False,True 
+            from projectmaster p inner join templatemaster t on (p.projecttemplateid = t.templateid)
+            inner join templatetasklist t3 on (t.templateid=t3.templateid)
+            inner join taskmaster t2 on (t2.taskid=t3.taskid)
+            inner join projectfunctionmaster pf on (pf.projectid = p.projectid and t2.functionid = pf.functionid)
+            where p.projectid = %s
+        """,(project_id,))
+        cur.execute("""
+            insert into dependenttaskmaster (projectid, taskid, depdendenttaskid, createdby, createdon)
+            select p.projectId,t.taskid, t.depdendenttaskid, p.createdbyemail, now() from templatedependenttasklist t inner join templatemaster t2 on t.templateid = t2.templateid 
+            inner join projectmaster p on p.projecttemplateid = t.templateid 
+            where p.projectid = %s
+        """, (project_id,))
+        conn.commit()
+        cur.close()
+        return project_id
