@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from flask import current_app
+from collections import defaultdict
 
 class ProjectManagementService:
 
@@ -44,3 +45,12 @@ class ProjectManagementService:
     def save_project(project_name,template_id, created_by, created_on,completion,functionalLeads):
         project_id = UserRepository.save_project(project_name,template_id, created_by, created_on,completion,functionalLeads)
         return project_id
+
+    @staticmethod
+    def get_all_tasks_by_functions():
+        tasks = UserRepository.get_all_tasks()
+        tasks_by_functions = defaultdict(list)
+        for task in tasks:
+            tasks_by_functions[task['function']].append(task['taskName'])
+        return tasks_by_functions
+
