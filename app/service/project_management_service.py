@@ -51,6 +51,6 @@ class ProjectManagementService:
         tasks = UserRepository.get_all_tasks()
         tasks_by_functions = defaultdict(list)
         for task in tasks:
-            tasks_by_functions[task['function']].append(task['taskName'])
+            tasks_by_functions[task['function_name']].append(task['taskName'])
         return tasks_by_functions
 

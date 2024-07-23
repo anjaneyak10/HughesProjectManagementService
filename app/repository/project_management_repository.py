@@ -54,17 +54,30 @@ class UserRepository:
         conn = get_db()
         cur = conn.cursor()
         cur.execute("""
-            SELECT *
-            FROM taskmaster
+            SELECT 
+                task.taskid,
+                task.taskName,
+                task.functionid,
+                func.functionName,
+                task.weightage
+            FROM 
+                taskmaster AS task
+            JOIN 
+                functionmaster AS func
+            ON 
+                task.functionid = func.functionid;
         """)
         tasks = cur.fetchall()
         cur.close()
         print(tasks)
+        # print(tasks)
+        # print(tasks[0][1])
         return [{
             'taskid': task[0],
             'taskName': task[1],
-            'function': task[2],
-            'weightage': task[3],
+            'function_id': task[2],
+            "function_name": task[3],
+            'weightage': task[4],
         } for task in tasks]
 
     @staticmethod
