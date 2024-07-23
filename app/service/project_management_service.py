@@ -3,6 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
 from flask import current_app
+from collections import defaultdict
 
 class ProjectManagementService:
 
@@ -24,3 +25,13 @@ class ProjectManagementService:
     def get_all_tasks():
         tasks = UserRepository.get_all_tasks()
         return tasks
+
+    @staticmethod
+    def get_all_tasks_by_functions():
+        tasks = UserRepository.get_all_tasks()
+        dic = defaultdict(list)
+        print(tasks)
+        if tasks:
+            for task in tasks:
+                dic[task['function']].append(task['taskName'])
+        return dic
