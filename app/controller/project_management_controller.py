@@ -63,9 +63,8 @@ def get_functions():
     data=request.get_json()
     template_id= data.get('templateId')
     functions = ProjectManagementService.get_functions(template_id)
-    print(functions)
     if functions:
-        return jsonify({'functions': functions}), 200
+        return jsonify(functions), 200
     return jsonify({'message': 'No Functions found'}), 404
 
 @cross_origin

@@ -109,7 +109,7 @@ class UserRepository:
         cur.close()
         print(functions)
         return [{
-            'funcitonId': function[0],
+            'functionId': function[0],
             'functionName': function[1],
         } for function in functions]
 
@@ -139,7 +139,7 @@ class UserRepository:
         """, (project_name,template_id, created_by, created_on, completion))
         project_id = cur.fetchone()[0]
         project_function_data = [
-            (project_id, functionalLead['functionId'], functionalLead['functionalLeadEmail'], 0) 
+            (project_id, functionalLead[0], functionalLead[1], 0)
             for functionalLead in functionalLeads
         ]
         cur.executemany("""
