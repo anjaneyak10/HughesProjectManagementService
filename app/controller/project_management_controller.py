@@ -99,3 +99,5 @@ def create_project():
     if project_id:
         return jsonify({'message': 'Project Created Successfully',"project_id":project_id}), 201
     return jsonify({'message': 'Project already exists'}), 400
+
+
