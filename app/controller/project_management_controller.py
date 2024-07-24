@@ -100,4 +100,23 @@ def create_project():
         return jsonify({'message': 'Project Created Successfully',"project_id":project_id}), 201
     return jsonify({'message': 'Project already exists'}), 400
 
+@cross_origin
+@auth_bp.route('/createtaskinmaster', methods=['POST'])
+def create_task_in_master():
+    data = request.get_json()
+    task_name = data.get('taskName')
+    function_id = data.get('functionId')
+    weightage = data.get('weightage')
+    tasks = ProjectManagementService.create_task_in_master(task_name, function_id, weightage)
+    print(tasks)
+    if tasks:
+        return jsonify({'message': 'Tasks Created Successfully'}), 201
+    return jsonify({'message': 'Tasks already exists'}), 400
 
+@cross_origin
+@auth_bp.route('/getallfunctions', methods=['GET'])
+def get_all_functions():
+    functions = ProjectManagementService.get_all_functions()
+    if functions:
+        return jsonify(functions), 200
+    return jsonify({'message': 'No Functions found'}), 404

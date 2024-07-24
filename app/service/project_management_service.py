@@ -54,3 +54,12 @@ class ProjectManagementService:
             tasks_by_functions[task['function_name']].append(task['taskName'])
         return tasks_by_functions
 
+    @staticmethod
+    def create_task_in_master(task_name, function_id, weightage):
+        return UserRepository.create_task_in_master(task_name, function_id, weightage)
+
+    @staticmethod
+    def get_all_functions():
+        functions = UserRepository.get_all_functions()
+        return functions
+
