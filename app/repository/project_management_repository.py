@@ -164,3 +164,31 @@ class UserRepository:
         conn.commit()
         cur.close()
         return project_id
+
+@staticmethod
+    def create_task_in_master(task_name, function_id, weightage):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO taskmaster (taskName, functionId, weightage)
+            VALUES (%s, %s, %s) RETURNING taskId
+        """, (task_name, function_id, weightage))
+        task_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        return task_id
+
+    @staticmethod
+    def get_all_functions():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT *
+            FROM functionMaster
+        """)
+        functions = cur.fetchall()
+        cur.close()
+        return [{
+            'functionId': function[0],
+            'functionName': function[1],
+        } for function in functions]
