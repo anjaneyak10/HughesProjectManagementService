@@ -139,8 +139,8 @@ class UserRepository:
         """, (project_name,template_id, created_by, created_on, completion))
         project_id = cur.fetchone()[0]
         project_function_data = [
-            (project_id, functionalLead[0], functionalLead[1], 0)
-            for functionalLead in functionalLeads
+            (project_id, functionId, leadEmail, 0)
+            for functionId, leadEmail in functionalLeads.items()
         ]
         cur.executemany("""
             INSERT INTO projectFunctionMaster (projectId, functionId, functionLeadEmail, completion)
@@ -164,31 +164,3 @@ class UserRepository:
         conn.commit()
         cur.close()
         return project_id
-
-    @staticmethod
-    def create_task_in_master(task_name, function_id, weightage):
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute("""
-            INSERT INTO taskmaster (taskName, functionId, weightage)
-            VALUES (%s, %s, %s) RETURNING taskId
-        """, (task_name, function_id, weightage))
-        task_id = cur.fetchone()[0]
-        conn.commit()
-        cur.close()
-        return task_id
-
-    @staticmethod
-    def get_all_functions():
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT *
-            FROM functionMaster
-        """)
-        functions = cur.fetchall()
-        cur.close()
-        return [{
-            'functionId': function[0],
-            'functionName': function[1],
-        } for function in functions]
