@@ -165,7 +165,7 @@ class UserRepository:
         cur.close()
         return project_id
 
-@staticmethod
+    @staticmethod
     def create_task_in_master(task_name, function_id, weightage):
         conn = get_db()
         cur = conn.cursor()
