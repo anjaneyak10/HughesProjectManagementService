@@ -70,8 +70,6 @@ class UserRepository:
         tasks = cur.fetchall()
         cur.close()
         print(tasks)
-        # print(tasks)
-        # print(tasks[0][1])
         return [{
             'taskid': task[0],
             'taskName': task[1],
@@ -180,9 +178,10 @@ class UserRepository:
     
     @staticmethod
     def modify_task_in_master(**kwargs):
+        
         # constructing set clause 
-        set_clause = ",".join([f"{key}=%s"] for key, value in kwargs.items() if (value is not None) or (key is not "taskid"))
-        values = [val for val in kwargs.values() if val is not None]
+        set_clause = ",".join([f"{key}=%s" for key, value in kwargs.items() if (value != None) & (key != "taskid")])
+        values = [val for key, val in kwargs.items() if (val != None) & (key != "taskid") ]
 
         conn = get_db()
         cur = conn.cursor()
