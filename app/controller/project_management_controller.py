@@ -114,6 +114,21 @@ def create_task_in_master():
     return jsonify({'message': 'Tasks already exists'}), 400
 
 @cross_origin
+@auth_bp.route('/modifytaskinmaster', methods=['POST'])
+def modify_task_in_master():
+    data = request.get_json()
+    task_name = data.get("taskName", None)
+    task_id = data.get("task_id")
+    function_id = data.get("functionId", None)
+    weightage = data.get("weightage", None)
+    is_obsolete = data.get("is_obsolete", None)
+    try:
+        task_id =ProjectManagementService.modify_task_in_master(taskid=task_id, taskname=task_name, functionid=function_id, weightage=weightage, is_obsolete=is_obsolete)
+        return jsonify({"message": "Task Modified Successfully"}), 200
+    except Exception as e:
+        return jsonify({"message":e}), 400
+
+@cross_origin
 @auth_bp.route('/getallfunctions', methods=['GET'])
 def get_all_functions():
     functions = ProjectManagementService.get_all_functions()

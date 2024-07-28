@@ -177,6 +177,27 @@ class UserRepository:
         conn.commit()
         cur.close()
         return task_id
+    
+    @staticmethod
+    def modify_task_in_master(**kwargs):
+        # constructing set clause 
+        set_clause = ",".join([f"{key}=%s"] for key, value in kwargs.items() if (value is not None) or (key is not "taskid"))
+        values = [val for val in kwargs.values() if val is not None]
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            f"""
+            UPDATE taskmaster tm
+            SET {set_clause}
+            WHERE tm.taskid = \'{kwargs["taskid"]}\'
+            RETURNING taskid     
+            """, values) 
+        task_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        return task_id
+
 
     @staticmethod
     def get_all_functions():

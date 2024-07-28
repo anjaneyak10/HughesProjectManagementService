@@ -57,7 +57,11 @@ class ProjectManagementService:
     @staticmethod
     def create_task_in_master(task_name, function_id, weightage):
         return UserRepository.create_task_in_master(task_name, function_id, weightage)
-
+    
+    @staticmethod
+    def modify_task_in_master(taskid, taskname=None, functionid=None, weightage=None, is_obsolete=None ):
+        return UserRepository.modify_task_in_master(taskid=taskid, taskname=taskname, functionid=functionid, weightage=weightage, is_obsolete=is_obsolete)
+    
     @staticmethod
     def get_all_functions():
         functions = UserRepository.get_all_functions()
