@@ -66,4 +66,8 @@ class ProjectManagementService:
     def get_all_functions():
         functions = UserRepository.get_all_functions()
         return functions
+    
+    @staticmethod
+    def get_modify_project_info(projectid:str):
+        return UserRepository.get_modify_project_info(projectid=projectid)
 

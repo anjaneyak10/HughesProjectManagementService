@@ -118,10 +118,10 @@ def create_task_in_master():
 def modify_task_in_master():
     data = request.get_json()
     task_name = data.get("taskName", None)
-    task_id = data.get("task_id")
+    task_id = data.get("taskId")
     function_id = data.get("functionId", None)
     weightage = data.get("weightage", None)
-    is_obsolete = data.get("is_obsolete", None)
+    is_obsolete = data.get("isObsolete", None)
     try:
         task_id =ProjectManagementService.modify_task_in_master(taskid=task_id, taskname=task_name, functionid=function_id, weightage=weightage, is_obsolete=is_obsolete)
         return jsonify({"message": "Task Modified Successfully"}), 200
@@ -135,3 +135,16 @@ def get_all_functions():
     if functions:
         return jsonify(functions), 200
     return jsonify({'message': 'No Functions found'}), 404
+
+
+@cross_origin
+@auth_bp.route("/getmodifyprojectinfo", methods=["GET"])
+def get_modify_project_info():
+    try:
+
+        project_id = request.args.get("projectid")
+        project_info = ProjectManagementService.get_modify_project_info(projectid=project_id)
+        return jsonify(project_info),200
+    except Exception as e:
+        return jsonify({"message": "Unable to get the project data", "data":e}),400
+    

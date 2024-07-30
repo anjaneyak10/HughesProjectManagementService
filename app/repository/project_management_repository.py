@@ -212,3 +212,49 @@ class UserRepository:
             'functionId': function[0],
             'functionName': function[1],
         } for function in functions]
+    
+    @staticmethod
+    def get_modify_project_info(projectid):
+        conn=get_db()
+        cur = conn.cursor()
+        cur.execute(f"""
+                    SELECT pm.*, tm.templatename FROM projectmaster pm
+                    JOIN templatemaster tm ON pm.projecttemplateid = tm.templateid
+                    WHERE pm.projectid = \'{projectid}\';""")
+        project_info =cur.fetchone()
+
+        column_names = [desc[0] for desc in cur.description]
+        cur.close()
+        if project_info:
+            project_info = dict(zip(column_names, project_info)) 
+        modify_project_info = {"project_info": project_info, "function_info": UserRepository.get_project_functions(projectid=projectid)}
+        return modify_project_info
+        
+
+
+
+
+
+    
+    @staticmethod
+    def get_project_functions(projectid):
+        conn=get_db()
+        cur = conn.cursor()
+        cur.execute(f"""
+                   SELECT  fm.functionid, fm.functionname, um.username AS functionlead FROM  projectfunctionmaster pfm 
+                    JOIN functionmaster fm ON pfm.functionid = fm.functionid
+                    JOIN usermaster um ON pfm.functionleademail = um.email
+                    WHERE pfm.projectid = \'{projectid}\';""")
+        functioninfo = cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
+        cur.close()
+        functioninfo = [dict(zip(column_names, row)) for row in functioninfo]
+        return functioninfo
+    
+
+
+
+
+
+        
+
