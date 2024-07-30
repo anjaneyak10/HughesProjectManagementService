@@ -143,7 +143,9 @@ def get_modify_project_info():
     try:
 
         project_id = request.args.get("projectid")
+        print(project_id)
         project_info = ProjectManagementService.get_modify_project_info(projectid=project_id)
+        print(project_info)
         return jsonify(project_info),200
     except Exception as e:
         return jsonify({"message": "Unable to get the project data", "data":e}),400
@@ -155,3 +157,10 @@ def get_functions_not_in_projec():
     functions = ProjectManagementService.get_functions_not_in_project(project_id)
     return jsonify(functions), 200
 
+
+@cross_origin
+@auth_bp.route("/modifyfunctionalleads", methods=["POST"])
+def modifyprojectLeads():
+    data = request.get_json()
+    data=ProjectManagementService.modify_leads(data.get('projectId'), data.get('projectFunctionLeads'))
+    return jsonify(data), 200

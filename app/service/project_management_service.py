@@ -75,3 +75,7 @@ class ProjectManagementService:
     def get_functions_not_in_project(projectid:str):
         return UserRepository.get_functions_not_in_project(projectid=projectid)
 
+    @staticmethod
+    def modify_leads(projectId,functionalLeads):
+        return UserRepository.modify_leads(projectId,functionalLeads)
+

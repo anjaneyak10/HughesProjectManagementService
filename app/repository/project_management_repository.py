@@ -260,6 +260,28 @@ class UserRepository:
         return functioninfo
 
 
+    @staticmethod
+    def modify_leads(project_id, functionalLeads):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("Delete from projectfunctionmaster where projectid = %s", (project_id,) )
+        try:
+            for function_id, lead_email in functionalLeads.items():
+                print(project_id + function_id + lead_email)
+                cur.execute("""
+                    INSERT INTO projectFunctionMaster (projectid, functionid, functionleademail, completion)
+                    VALUES (%s, %s, %s, 0)
+                """, (project_id, function_id, lead_email,))
+            conn.commit()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conn.rollback()
+        finally:
+            cur.close()
+            conn.close()
+        return project_id
+
+
 
     
 
