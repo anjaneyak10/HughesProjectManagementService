@@ -70,4 +70,8 @@ class ProjectManagementService:
     @staticmethod
     def get_modify_project_info(projectid:str):
         return UserRepository.get_modify_project_info(projectid=projectid)
+    
+    @staticmethod
+    def get_functions_not_in_project(projectid:str):
+        return UserRepository.get_functions_not_in_project(projectid=projectid)
 

@@ -44,7 +44,7 @@ def get_task_template():
 @auth_bp.route('/getalltasks', methods=['GET'])
 def get_all_tasks():
     tasks = ProjectManagementService.get_all_tasks()
-    print(tasks)
+    # print(tasks)
     if tasks:
         return jsonify({'tasks': tasks}), 200
     return jsonify({'message': 'No tasks found'}), 404
@@ -71,7 +71,7 @@ def get_functions():
 @auth_bp.route('/getallemployees', methods=['GET'])
 def get_all_employees():
     employees = ProjectManagementService.get_all_employees()
-    print(employees)
+    # print(employees)
     if employees:
         return jsonify({'employees': employees}), 200
     return jsonify({'message': 'No Employees found'}), 404
@@ -80,7 +80,7 @@ def get_all_employees():
 @auth_bp.route('/getalltemplates', methods=['GET'])
 def get_all_templates():
     templates = ProjectManagementService.get_all_templates()
-    print(templates)
+    # print(templates)
     if templates:
         return jsonify({'templates': templates}), 200
     return jsonify({'message': 'No Functions found'}), 404
@@ -108,7 +108,7 @@ def create_task_in_master():
     function_id = data.get('functionId')
     weightage = data.get('weightage')
     tasks = ProjectManagementService.create_task_in_master(task_name, function_id, weightage)
-    print(tasks)
+    # print(tasks)
     if tasks:
         return jsonify({'message': 'Tasks Created Successfully'}), 201
     return jsonify({'message': 'Tasks already exists'}), 400
@@ -148,3 +148,10 @@ def get_modify_project_info():
     except Exception as e:
         return jsonify({"message": "Unable to get the project data", "data":e}),400
     
+@cross_origin
+@auth_bp.route("/getfunctionsnotinproject", methods=["GET"])
+def get_functions_not_in_projec():
+    project_id = request.args.get("projectid")
+    functions = ProjectManagementService.get_functions_not_in_project(project_id)
+    return jsonify(functions), 200
+

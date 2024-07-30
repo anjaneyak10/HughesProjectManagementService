@@ -230,11 +230,6 @@ class UserRepository:
         modify_project_info = {"project_info": project_info, "function_info": UserRepository.get_project_functions(projectid=projectid)}
         return modify_project_info
         
-
-
-
-
-
     
     @staticmethod
     def get_project_functions(projectid):
@@ -250,6 +245,24 @@ class UserRepository:
         cur.close()
         functioninfo = [dict(zip(column_names, row)) for row in functioninfo]
         return functioninfo
+    
+    @staticmethod
+    def get_functions_not_in_project(projectid):
+        conn=get_db()
+        cur = conn.cursor()
+        cur.execute(f"""
+            SELECT * from functionmaster fm
+            WHERE fm.functionid NOT IN (SELECT pfm.functionid FROM projectfunctionmaster pfm WHERE pfm.projectid =\'{projectid}\');""")
+        functioninfo=  cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
+        cur.close()
+        functioninfo = [dict(zip(column_names, row))for row in functioninfo]
+        return functioninfo
+
+
+
+    
+
     
 
 
