@@ -27,11 +27,55 @@ class ProjectManagementService:
         return tasks
 
     @staticmethod
+    def get_all_employees():
+        employees = UserRepository.get_all_employees()
+        return employees
+
+    @staticmethod
+    def get_functions(template_id):
+        functions = UserRepository.get_functions(template_id)
+        return functions
+
+    @staticmethod
+    def get_all_templates():
+        templates = UserRepository.get_all_templates()
+        return templates
+    
+    @staticmethod
+    def save_project(project_name,template_id, created_by, created_on,completion,functionalLeads):
+        project_id = UserRepository.save_project(project_name,template_id, created_by, created_on,completion,functionalLeads)
+        return project_id
+
+    @staticmethod
     def get_all_tasks_by_functions():
         tasks = UserRepository.get_all_tasks()
-        dic = defaultdict(list)
-        print(tasks)
-        if tasks:
-            for task in tasks:
-                dic[task['function']].append(task['taskName'])
-        return dic
+        tasks_by_functions = defaultdict(list)
+        for task in tasks:
+            tasks_by_functions[task['function_name']].append(task['taskName'])
+        return tasks_by_functions
+
+    @staticmethod
+    def create_task_in_master(task_name, function_id, weightage):
+        return UserRepository.create_task_in_master(task_name, function_id, weightage)
+    
+    @staticmethod
+    def modify_task_in_master(taskid, taskname=None, functionid=None, weightage=None, is_obsolete=None ):
+        return UserRepository.modify_task_in_master(taskid=taskid, taskname=taskname, functionid=functionid, weightage=weightage, is_obsolete=is_obsolete)
+    
+    @staticmethod
+    def get_all_functions():
+        functions = UserRepository.get_all_functions()
+        return functions
+    
+    @staticmethod
+    def get_modify_project_info(projectid:str):
+        return UserRepository.get_modify_project_info(projectid=projectid)
+    
+    @staticmethod
+    def get_functions_not_in_project(projectid:str):
+        return UserRepository.get_functions_not_in_project(projectid=projectid)
+
+    @staticmethod
+    def modify_leads(projectId,functionalLeads):
+        return UserRepository.modify_leads(projectId,functionalLeads)
+
