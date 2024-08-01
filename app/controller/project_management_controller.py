@@ -107,8 +107,8 @@ def create_task_in_master():
     task_name = data.get('taskName')
     function_id = data.get('functionId')
     weightage = data.get('weightage')
-    tasks = ProjectManagementService.create_task_in_master(task_name, function_id, weightage)
-    # print(tasks)
+    email_id = data.get("emailId")
+    tasks = ProjectManagementService.create_task_in_master(task_name, function_id, weightage, email_id)
     if tasks:
         return jsonify({'message': 'Tasks Created Successfully'}), 201
     return jsonify({'message': 'Tasks already exists'}), 400
@@ -122,8 +122,9 @@ def modify_task_in_master():
     function_id = data.get("functionId", None)
     weightage = data.get("weightage", None)
     is_obsolete = data.get("isObsolete", None)
+    email_id = data.get("emailId")
     try:
-        task_id =ProjectManagementService.modify_task_in_master(taskid=task_id, taskname=task_name, functionid=function_id, weightage=weightage, is_obsolete=is_obsolete)
+        task_id =ProjectManagementService.modify_task_in_master(taskid=task_id, taskname=task_name, functionid=function_id, weightage=weightage, is_obsolete=is_obsolete, email_id=email_id)
         return jsonify({"message": "Task Modified Successfully"}), 200
     except Exception as e:
         return jsonify({"message":e}), 400

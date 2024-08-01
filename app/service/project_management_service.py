@@ -55,12 +55,12 @@ class ProjectManagementService:
         return tasks_by_functions
 
     @staticmethod
-    def create_task_in_master(task_name, function_id, weightage):
-        return UserRepository.create_task_in_master(task_name, function_id, weightage)
+    def create_task_in_master(task_name, function_id, weightage, email_id):
+        return UserRepository.create_task_in_master(task_name, function_id, weightage, email_id)
     
     @staticmethod
-    def modify_task_in_master(taskid, taskname=None, functionid=None, weightage=None, is_obsolete=None ):
-        return UserRepository.modify_task_in_master(taskid=taskid, taskname=taskname, functionid=functionid, weightage=weightage, is_obsolete=is_obsolete)
+    def modify_task_in_master(taskid,email_id, taskname=None, functionid=None, weightage=None, is_obsolete=None,  ):
+        return UserRepository.modify_task_in_master(taskid=taskid, taskname=taskname, functionid=functionid, weightage=weightage, is_obsolete=is_obsolete, email_id=email_id)
     
     @staticmethod
     def get_all_functions():
