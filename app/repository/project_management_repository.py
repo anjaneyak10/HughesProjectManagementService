@@ -58,12 +58,14 @@ class UserRepository:
             SELECT 
                 task.taskid,
                 task.taskName,
-                task.functionid,
-                func.functionName,
+                task.functionid AS function_id,
+                func.functionName AS function_name,
                 task.weightage,
                 task.createdon,
                 task.createdby,
+                um1.name AS createdbyName,
                 task.lastmodifiedby,
+                um2.name AS lastmodifiedbyName,
                 task.lastmodifiedon
                 
             FROM 
@@ -71,18 +73,33 @@ class UserRepository:
             JOIN 
                 functionmaster AS func
             ON 
-                task.functionid = func.functionid;
+                task.functionid = func.functionid
+            LEFT JOIN
+                usermaster AS um1
+            ON
+                task.createdby = um1.email
+            LEFT JOIN 
+                usermaster as um2
+            ON
+                task.lastmodifiedby=um2.email
+            WHERE
+                task.is_obsolete IS FALSE;
+                    
         """)
         tasks = cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
         cur.close()
-        print(tasks)
-        return [{
-            'taskid': task[0],
-            'taskName': task[1],
-            'function_id': task[2],
-            "function_name": task[3],
-            'weightage': task[4],
-        } for task in tasks]
+        result = [dict(zip(column_names, row)) for row in tasks]
+        return result
+        # print(tasks)
+        # return [{
+        #     'taskid': task[0],
+        #     'taskName': task[1],
+        #     'function_id': task[2],
+        #     "function_name": task[3],
+        #     'weightage': task[4],
+
+        # } for task in tasks]
 
     @staticmethod
     def get_all_employees():
