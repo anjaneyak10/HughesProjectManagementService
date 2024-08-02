@@ -1,4 +1,5 @@
 from app.extensions import get_db
+from datetime import datetime, timezone
 
 class UserRepository:
     @staticmethod
@@ -57,26 +58,48 @@ class UserRepository:
             SELECT 
                 task.taskid,
                 task.taskName,
-                task.functionid,
-                func.functionName,
-                task.weightage
+                task.functionid AS function_id,
+                func.functionName AS function_name,
+                task.weightage,
+                task.createdon,
+                task.createdby,
+                um1.name AS createdbyName,
+                task.lastmodifiedby,
+                um2.name AS lastmodifiedbyName,
+                task.lastmodifiedon
+                
             FROM 
                 taskmaster AS task
             JOIN 
                 functionmaster AS func
             ON 
-                task.functionid = func.functionid;
+                task.functionid = func.functionid
+            LEFT JOIN
+                usermaster AS um1
+            ON
+                task.createdby = um1.email
+            LEFT JOIN 
+                usermaster as um2
+            ON
+                task.lastmodifiedby=um2.email
+            WHERE
+                task.is_obsolete IS FALSE;
+                    
         """)
         tasks = cur.fetchall()
+        column_names = [desc[0] for desc in cur.description]
         cur.close()
-        print(tasks)
-        return [{
-            'taskid': task[0],
-            'taskName': task[1],
-            'function_id': task[2],
-            "function_name": task[3],
-            'weightage': task[4],
-        } for task in tasks]
+        result = [dict(zip(column_names, row)) for row in tasks]
+        return result
+        # print(tasks)
+        # return [{
+        #     'taskid': task[0],
+        #     'taskName': task[1],
+        #     'function_id': task[2],
+        #     "function_name": task[3],
+        #     'weightage': task[4],
+
+        # } for task in tasks]
 
     @staticmethod
     def get_all_employees():
@@ -164,13 +187,13 @@ class UserRepository:
         return project_id
 
     @staticmethod
-    def create_task_in_master(task_name, function_id, weightage):
+    def create_task_in_master(task_name, function_id, weightage, email_id):
         conn = get_db()
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO taskmaster (taskName, functionId, weightage)
-            VALUES (%s, %s, %s) RETURNING taskId
-        """, (task_name, function_id, weightage))
+            INSERT INTO taskmaster (taskName, functionId, weightage, is_obsolete, created_by, created_on, lastmodifiedby, lastmodifiedon)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING taskId
+        """, (task_name, function_id, weightage, False, email_id,datetime.now(timezone.utc()), email_id,  datetime.now(timezone.utc).now() ))
         task_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
@@ -180,15 +203,17 @@ class UserRepository:
     def modify_task_in_master(**kwargs):
         
         # constructing set clause 
-        set_clause = ",".join([f"{key}=%s" for key, value in kwargs.items() if (value != None) & (key != "taskid")])
-        values = [val for key, val in kwargs.items() if (val != None) & (key != "taskid") ]
+        set_clause = ",".join([f"{key}=%s" for key, value in kwargs.items() if (value != None) & ((key != "taskid") and (key!= "email_id"))])
+        values = [val for key, val in kwargs.items() if (val != None) & ((key != "taskid") and (key!= "email_id"))]
 
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
             f"""
             UPDATE taskmaster tm
-            SET {set_clause}
+            SET {set_clause},
+            lastmodifiedon = \'{datetime.now(timezone.utc).now()}\',
+            lastmodifiedby = \'{kwargs["email_id"]}\'
             WHERE tm.taskid = \'{kwargs["taskid"]}\'
             RETURNING taskid     
             """, values) 
