@@ -306,6 +306,51 @@ class UserRepository:
             conn.close()
         return project_id
 
+    @staticmethod
+    def get_all_projects():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT projectid, projectname
+            FROM projectMaster
+        """)
+        projects = cur.fetchall()
+        cur.close()
+        return [{
+            'projectId': project[0],
+            'projectName': project[1],
+        } for project in projects]
+
+    @staticmethod
+    def save_portfolio(portfolio_name, projects):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            INSERT INTO portfoliomaster (portfolioName)
+            VALUES (%s) RETURNING portfolioId
+        """, (portfolio_name,))
+        portfolio_id = cur.fetchone()[0]
+        project_data = [(portfolio_id, project_id) for project_id in projects]
+        cur.executemany("""
+            INSERT INTO portfolioprojectmaster (portfolioId, projectId)
+            VALUES (%s, %s)
+        """, project_data)
+        conn.commit()
+        cur.close()
+        return portfolio_id
+
+    @staticmethod
+    def get_all_portfolios():
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT *
+            FROM portfoliomaster
+        """, ())
+        projects = cur.fetchall()
+        cur.close()
+        return [ projects]
+
 
 
     

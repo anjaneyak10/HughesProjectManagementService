@@ -79,3 +79,15 @@ class ProjectManagementService:
     def modify_leads(projectId,functionalLeads):
         return UserRepository.modify_leads(projectId,functionalLeads)
 
+    @staticmethod
+    def get_all_projects():
+        return UserRepository.get_all_projects()
+
+    @staticmethod
+    def save_portfolio(portfolio_name, projects):
+        return UserRepository.save_portfolio(portfolio_name,projects)
+
+    @staticmethod
+    def get_all_portfolios():
+        return UserRepository.get_all_portfolios()
+

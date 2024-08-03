@@ -165,3 +165,30 @@ def modifyprojectLeads():
     data = request.get_json()
     data=ProjectManagementService.modify_leads(data.get('projectId'), data.get('projectFunctionLeads'))
     return jsonify(data), 200
+
+@cross_origin
+@auth_bp.route('/getallprojects', methods=['GET'])
+def get_all_projects():
+    projects = ProjectManagementService.get_all_projects()
+    if projects:
+        return jsonify(projects), 200
+    return jsonify({'message': 'No projects found'}), 404
+
+@cross_origin
+@auth_bp.route('/saveportfolio', methods=['POST'])
+def save_portfolio():
+    data = request.get_json()
+    portfolio_name = data.get('portfolioName')
+    projects = data.get('projects')
+    portfolio_id = ProjectManagementService.save_portfolio(portfolio_name, projects)
+    if portfolio_id:
+        return jsonify({'message': 'portfolio created successfully',"portfolio_id":portfolio_id}), 201
+    return jsonify({'message': 'portfolio already exists'}), 400
+
+@cross_origin
+@auth_bp.route('/getallportfolios', methods=['GET'])
+def get_all_portfolios():
+    portfolios = ProjectManagementService.get_all_portfolios()
+    if portfolios:
+        return jsonify(portfolios), 200
+    return jsonify({'message': 'No portfolios found'}), 404
