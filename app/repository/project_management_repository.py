@@ -44,7 +44,8 @@ class UserRepository:
         cur.execute("""
             SELECT taskid
             FROM templateTaskList
-            WHERE templateid = %s
+            JOIN taskmaster tm ON tm.taskid =taskid
+            WHERE templateid = %s AND tm.is_obsolete =FALSE;
         """, (template_id,))
         tasks = cur.fetchall()
         cur.close()
