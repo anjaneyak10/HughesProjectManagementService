@@ -91,3 +91,10 @@ class ProjectManagementService:
     def get_all_portfolios():
         return UserRepository.get_all_portfolios()
 
+    @staticmethod
+    def get_project_and_non_project_tasks(project_id):
+        return UserRepository.get_project_and_non_project_tasks(project_id)
+
+    @staticmethod
+    def modify_project(project_id, added_tasks, removed_tasks,email):
+        return UserRepository.modify_project(project_id, added_tasks, removed_tasks,email)

@@ -351,6 +351,62 @@ class UserRepository:
         cur.close()
         return [ projects]
 
+    @staticmethod
+    def get_project_and_non_project_tasks(project_id):
+        conn=get_db()
+        cur = conn.cursor()
+        get_tasks_in_project_query = """
+        SELECT tm.taskid, tm.taskname
+        FROM taskmaster tm
+        JOIN projectTaskmaster ptm ON tm.taskid = ptm.taskid
+        WHERE ptm.projectid = %s;
+    """
+        cur.execute(get_tasks_in_project_query, (project_id,))
+        get_tasks_in_project= cur.fetchall()
+        get_tasks_in_project= [{'taskId': taskid, 'taskName': taskname} for taskid, taskname in get_tasks_in_project]
+
+
+        get_tasks_not_in_project_query = """
+        SELECT tm.taskid, tm.taskname
+        FROM taskmaster tm
+        WHERE tm.taskid NOT IN (SELECT ptm.taskid FROM projectTaskmaster ptm WHERE ptm.projectid = %s);
+    """
+        cur.execute(get_tasks_not_in_project_query, (project_id,))
+        get_tasks_not_in_project= cur.fetchall()
+        cur.close()
+        get_tasks_not_in_project =  [{'taskId': taskid, 'taskName': taskname} for taskid, taskname in get_tasks_not_in_project]
+        return get_tasks_in_project, get_tasks_not_in_project
+
+    @staticmethod
+    def modify_project(project_id, added_tasks,removed_tasks,mail):
+        conn= get_db()
+        cur = conn.cursor()
+        try:
+            for task_id in removed_tasks:
+                cur.execute("""
+                    DELETE FROM projectTaskMaster
+                    WHERE projectid = %s AND taskid = %s;
+                """, (project_id, task_id))
+            for task_id in added_tasks:
+                cur.execute("""
+                    INSERT INTO projectTaskMaster (projectid, taskid, functionid, completion, weightage, createdby, createdon, lastupdatedby, lastupdatedon, active)
+                    Values (%s,%s, (SELECT functionid FROM taskmaster WHERE taskid = %s), False, (SELECT weightage FROM taskmaster WHERE taskid = %s), %s, %s, %s, %s, True)
+                """, (project_id, task_id, task_id, task_id, mail, datetime.now(), mail, datetime.now()))
+            conn.commit()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conn.rollback()
+            cur.close()
+            conn.close()
+            return False
+        finally:
+            cur.close()
+            conn.close()
+        return True
+
+
+
+
 
 
     

@@ -192,3 +192,30 @@ def get_all_portfolios():
     if portfolios:
         return jsonify(portfolios), 200
     return jsonify({'message': 'No portfolios found'}), 404
+
+@cross_origin
+@auth_bp.route('/getallprojecttasksandnonprojecttasks', methods=['GET'])
+def get_all_project_tasks_and_non_project_tasks():
+    project_id = request.args.get('projectId')
+    print(project_id)
+    tasks_in_project,tasks_not_in_project = ProjectManagementService.get_project_and_non_project_tasks(project_id)
+    if tasks_in_project or tasks_not_in_project:
+        print(tasks_in_project)
+        print(tasks_not_in_project)
+        return jsonify({'tasks_in_project': tasks_in_project,'tasks_not_in_project':tasks_not_in_project}), 200
+    return jsonify({'message': 'No tasks found'}), 404
+
+@cross_origin
+@auth_bp.route('/modifyprojecttasks', methods=['PUT'])
+def modify_project():
+    data = request.get_json()
+    print(data)
+    project_id = data.get('projectId')
+    added_tasks = data.get('addedTasks')
+    removed_tasks = data.get('removedTasks')
+    email = data.get('email')
+    print(project_id,added_tasks,removed_tasks,email)
+    project_id = ProjectManagementService.modify_project(project_id, added_tasks, removed_tasks,email)
+    if project_id:
+        return jsonify({'message': 'Project Modified Successfully',"project_id":project_id}), 201
+    return jsonify({'message': 'Project already exists'}), 400
