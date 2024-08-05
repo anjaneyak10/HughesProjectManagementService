@@ -192,9 +192,9 @@ class UserRepository:
         conn = get_db()
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO taskmaster (taskName, functionId, weightage, is_obsolete, created_by, created_on, lastmodifiedby, lastmodifiedon)
+            INSERT INTO taskmaster (taskName, functionId, weightage, is_obsolete, createdby, createdon, lastmodifiedby, lastmodifiedon)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s) RETURNING taskId
-        """, (task_name, function_id, weightage, False, email_id,datetime.now(timezone.utc()), email_id,  datetime.now(timezone.utc).now() ))
+        """, (task_name, function_id, weightage, False, email_id,datetime.now(timezone.utc), email_id,  datetime.now(timezone.utc).now() ))
         task_id = cur.fetchone()[0]
         conn.commit()
         cur.close()
